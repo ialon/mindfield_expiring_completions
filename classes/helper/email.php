@@ -10,7 +10,17 @@
 
 namespace local_expiring_completions\helper;
 
+use \local_expiring_completions\helper\log;
+
 class email {
+    /**
+     * Sends an expiring completion email to a user.
+     *
+     * @param string $subject The subject of the email.
+     * @param string $body The body of the email.
+     * @param object $completion The completion object.
+     * @return void
+     */
     public static function send_expiring_completion_email($subject, $body, $completion) {
         global $CFG;
 
@@ -28,12 +38,16 @@ class email {
         ];
         $body = format_text($body, FORMAT_HTML, $options);
 
-        return email_to_user(
+        $result = email_to_user(
             $user,
             $sender,
             $subject,
             html_to_text($body),
             $body
         );
+
+        if ($result) {
+            log::create_record($subject, $body, $completion);
+        }
     }
 }

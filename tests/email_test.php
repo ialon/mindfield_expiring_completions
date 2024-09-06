@@ -22,6 +22,8 @@ class email_test extends \advanced_testcase {
     }
 
     public function test_send_expiring_completion_email() {
+        global $DB;
+
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
@@ -55,5 +57,9 @@ class email_test extends \advanced_testcase {
         $this->assertSame($subject, $result[0]->subject);
         $this->assertStringContainsString($body, quoted_printable_decode($result[0]->body));
         $this->assertSame($user->email, $result[0]->to);
+
+        // Check the log record.
+        $logs = $DB->get_records('local_expiring_comp_log');
+        $this->assertSame(1, count($logs));
     }
 }
