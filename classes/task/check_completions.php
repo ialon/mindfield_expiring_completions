@@ -9,6 +9,9 @@
 
 namespace local_expiring_completions\task;
 
+use \local_expiring_completions\helper\completion as completion_helper;
+use \local_expiring_completions\helper\email as email_helper;
+
 defined('MOODLE_INTERNAL') || die();
 
 class check_completions extends \core\task\scheduled_task {
@@ -26,6 +29,21 @@ class check_completions extends \core\task\scheduled_task {
      * Prepare and send emails
      */
     public function execute() {
-        // Todo: Implement the task
+        // Get the list of users with expiring completions
+        $expirations = completion_helper::get_expiring_completions();
+
+        foreach ($expirations as $expiration) {
+            foreach ($expiration->completions as $completion) {
+                // Reset all activities
+
+                // Expire enrolments for the users
+                completion_helper::expire_enrolments($completion);
+
+                // Delete customcerts
+
+                // Notify the user
+                email_helper::send_expiring_completion_email($expiration->subject, $expiration->body, $completion);
+            }
+        }
     }
 }
