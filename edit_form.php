@@ -55,6 +55,7 @@ class edit_form extends moodleform {
 
         // Email subject
         $mform->addElement('text', 'subject', get_string('emailsubject', 'local_expiring_completions'));
+        $mform->addHelpButton('subject', 'emailbody', 'local_expiring_completions');
         $mform->addRule('subject', get_string('missingsubject', 'local_expiring_completions'), 'required', null, 'client');
         $mform->setType('subject', PARAM_TEXT);
         $mform->setDefault('subject', get_string('emailsubject:default', 'local_expiring_completions'));
@@ -62,6 +63,7 @@ class edit_form extends moodleform {
         // Email body
         $editoroptions = $this->_customdata['editoroptions'];
         $mform->addElement('editor', 'body_editor', get_string('emailbody', 'local_expiring_completions'), null, $editoroptions);
+        $mform->addHelpButton('body_editor', 'emailbody', 'local_expiring_completions');
         $mform->addRule('body_editor', get_string('missingbody', 'local_expiring_completions'), 'required', null, 'client');
         $mform->setType('body_editor', PARAM_RAW);
 

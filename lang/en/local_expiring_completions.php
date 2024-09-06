@@ -44,4 +44,11 @@ $string['emailsubject'] = 'Email subject';
 $string['missingsubject'] = 'Subject is required';
 $string['emailsubject:default'] = 'Your completion is about to expire';
 $string['emailbody'] = 'Email body';
+$string['emailbody_help'] = 'This field supports placeholders:
+
+[[username]] => jsmith
+
+[[fullname]] => John Smith
+
+[[courselink]] => https://moodle.site/course/view.php?id=1';
 $string['missingbody'] = 'Body is required';

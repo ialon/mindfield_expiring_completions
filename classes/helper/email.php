@@ -27,6 +27,11 @@ class email {
         $context = \context_system::instance();
         $sender = \core_user::get_noreply_user();
         $user = \core_user::get_user($completion->userid);
+        $course = get_course($completion->course);
+
+        // Replace placeholders
+        $subject = self::replace_placeholders($subject, $user, $course);
+        $body = self::replace_placeholders($body, $user, $course);
 
         $body = file_rewrite_pluginfile_urls($body, 'pluginfile.php', $context->id, 'local_engagement_email', 'body', 0);
 
@@ -49,5 +54,23 @@ class email {
         if ($result) {
             log::create_record($subject, $body, $completion);
         }
+    }
+
+    /**
+     * Replaces placeholders in the given text with user and course information.
+     *
+     * @param string $text The text containing placeholders to be replaced.
+     * @param object $user The user object containing user information.
+     * @param object $course The course object containing course information.
+     * @return string The text with replaced placeholders.
+     */
+    public static function replace_placeholders($text, $user, $course) {
+        $text = str_replace('[[username]]', $user->username, $text);
+        $text = str_replace('[[fullname]]', fullname($user), $text);
+        
+        $courselink = new \moodle_url('/course/view.php', ['id' => $course->id]);
+        $text = str_replace('[[courselink]]', $courselink->out(), $text);
+
+        return $text;
     }
 }

@@ -10,6 +10,7 @@
 
 namespace local_expiring_completions;
 
+use local_expiring_completions\helper\email as email_helper;
 use local_expiring_completions\testing\generator;
 use local_expiring_completions\task\check_completions;
 
@@ -61,5 +62,23 @@ class email_test extends \advanced_testcase {
         // Check the log record.
         $logs = $DB->get_records('local_expiring_comp_log');
         $this->assertSame(1, count($logs));
+    }
+
+    public function test_replace_placeholders() {
+        $data = (object) [
+            'username' => 'jsmith',
+            'firstname' => 'John',
+            'lastname' => 'Smith'
+        ];
+        $user = $this->getDataGenerator()->create_user($data);
+        $course = (object) [
+            'id' => 5,
+            'fullname' => 'Course 1'
+        ];
+
+        $text = 'Hello [[username]], your name is [[fullname]] and you are in course [[courselink]].';
+        $expected = 'Hello jsmith, your name is John Smith and you are in course https://www.example.com/moodle/course/view.php?id=5.';
+        $result = email_helper::replace_placeholders($text, $user, $course);
+        $this->assertSame($expected, $result);
     }
 }
